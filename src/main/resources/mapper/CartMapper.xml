@@ -1,0 +1,28 @@
+<mapper namespace="com.shop.living.dao.CartDao">
+
+    <!-- 장바구니 추가 -->
+    <insert id="addToCart" useGeneratedKeys="true" keyProperty="cartId">
+        INSERT INTO cart (email, prodcode, quantity)
+        VALUES (#{email}, #{prodcode}, #{quantity})
+        ON DUPLICATE KEY UPDATE quantity = quantity + #{quantity};
+    </insert>
+
+    <!-- ✅ resultMap을 사용하여 cart_id를 cartId로 매핑 -->
+    <resultMap id="cartResultMap" type="com.shop.living.dto.Cart">
+        <id column="cart_id" property="cartId"/>
+        <result column="email" property="email"/>
+        <result column="prodcode" property="prodcode"/>
+        <result column="quantity" property="quantity"/>
+    </resultMap>
+
+    <!-- ✅ 장바구니 조회 (cart_id를 cartId로 매핑) -->
+    <select id="getCartItems" resultMap="cartResultMap">
+        SELECT cart_id AS cartId, email, prodcode, quantity FROM cart WHERE email = #{email};
+    </select>
+
+    <!-- 장바구니에서 상품 삭제 -->
+    <delete id="removeFromCart">
+        DELETE FROM cart WHERE cart_id = #{cartId};
+    </delete>
+
+</mapper>
