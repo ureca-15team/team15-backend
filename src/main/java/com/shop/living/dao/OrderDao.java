@@ -25,7 +25,8 @@ public interface OrderDao {
 
     // ✅ 주문 항목 추가 (주문한 상품 추가)
 	@Insert("INSERT INTO order_items (order_id, prodcode, quantity) VALUES (#{orderId}, #{prodcode}, #{quantity})")
-    void addOrderItem(@Param("orderId") int orderId, @Param("prodcode") int prodcode, @Param("quantity") int quantity);
+	void addOrderItem(@Param("orderId") int orderId, @Param("prodcode") int prodcode, @Param("quantity") int quantity);
+
 
     // ✅ 주문 목록 조회 (내가 구매한 상품 조회)
 	@Select("SELECT * FROM orders WHERE email = #{email}")
@@ -58,10 +59,11 @@ public interface OrderDao {
     @Delete({
         "<script>",
         "DELETE FROM cart WHERE email = #{email} AND prodcode IN",
-        "<foreach item='item' collection='prodcodeList' open='(' separator=',' close=')'>",
-        "#{item}",
+        "<foreach item='item' collection='orderItems' open='(' separator=',' close=')'>",
+        "#{item.prodcode}",
         "</foreach>",
         "</script>"
     })
-    void removeMultipleItems(String email, List<Integer> prodcodeList);
+    void removeMultipleItems(@Param("email") String email, @Param("orderItems") List<OrderItem> orderItems);
+
 }

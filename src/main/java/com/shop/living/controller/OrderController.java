@@ -77,7 +77,7 @@ public class OrderController {
     @DeleteMapping("/{orderId}")
     public String cancelOrder(@PathVariable int orderId, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("member_email") == null) {
+        if (session == null || session.getAttribute("member") == null) {
             return "로그인이 필요합니다.";
         }
         orderService.cancelOrder(orderId);

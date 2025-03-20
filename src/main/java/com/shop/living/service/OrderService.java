@@ -29,18 +29,20 @@ public class OrderService {
     }
 
     // ✅ 장바구니에서 선택한 상품 구매
-    public void createOrderFromCart(String email, List<Integer> prodcodeList) {
+    public void createOrderFromCart(String email, List<OrderItem> orderItems) {
         Order order = new Order();
         order.setEmail(email);
         orderDao.createOrder(order);
         int orderId = order.getOrderId();
-        System.out.println("장바구니 주문 생성된 orderId: " + orderId);
+        System.out.println("✅ 주문 생성된 orderId: " + orderId);
 
-        for (int prodcode : prodcodeList) {
-            orderDao.addOrderItem(orderId, prodcode, 1);
+        // ✅ 주문 아이템 저장
+        for (OrderItem item : orderItems) {
+            orderDao.addOrderItem(orderId, item.getProdcode(), item.getQuantity());
         }
 
-        orderDao.removeMultipleItems(email, prodcodeList);
+        // ✅ 장바구니에서 해당 상품 제거
+        orderDao.removeMultipleItems(email, orderItems);
     }
 
     // ✅ 구매 목록 조회

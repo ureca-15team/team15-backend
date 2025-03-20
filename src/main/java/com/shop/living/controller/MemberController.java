@@ -1,9 +1,10 @@
 package com.shop.living.controller;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,7 @@ public class MemberController {
     }
     
     // ✅ 이메일 중복 확인 API
-    @GetMapping("/check-email")
+    @PostMapping("/check-email") // ✅ GET -> POST로 변경
     public Map<String, Object> checkEmail(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         String email = request.get("email");
@@ -50,19 +51,15 @@ public class MemberController {
         }
 
         boolean isAvailable = memberService.isEmailAvailable(email);
-        if (isAvailable) {
-            response.put("available", true);
-            response.put("message", "사용 가능한 이메일입니다.");
-        } else {
-            response.put("available", false);
-            response.put("message", "이미 사용 중인 이메일입니다.");
-        }
+        response.put("available", isAvailable);
+        response.put("message", isAvailable ? "사용 가능한 이메일입니다." : "이미 사용 중인 이메일입니다.");
         return response;
     }
 
+
     // ✅ 로그인 (세션 방식)
     @PostMapping("/login")
-    public Map<String, String> login(@RequestBody Member member, HttpServletRequest request) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody Member member, HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
         try {
             Member loggedInMember = memberService.login(member);
@@ -72,15 +69,17 @@ public class MemberController {
 
                 response.put("nickname", loggedInMember.getNickname());
                 response.put("message", "로그인 성공");
+                return ResponseEntity.ok(response); // 200 OK (로그인 성공)
             } else {
                 response.put("message", "이메일 또는 비밀번호를 확인해주세요.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // 401 Unauthorized (로그인 실패)
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            response.put("message", "로그인 실패");
+            response.put("message", "서버 오류 발생");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 500 Internal Server Error
         }
-        return response;
     }
+    
 
     // ✅ 로그아웃 (세션 삭제)
     @PostMapping("/logout")
@@ -92,6 +91,8 @@ public class MemberController {
         }
         return "로그인 상태가 아닙니다.";
     }
+    
+
 
     // ✅ 로그인 상태 확인
     @GetMapping("/status")

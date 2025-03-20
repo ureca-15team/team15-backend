@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.shop.living.dto.Cart;
 import com.shop.living.dto.Member;
+import com.shop.living.dto.OrderItem;
 import com.shop.living.service.CartService;
 import com.shop.living.service.OrderService;
 
@@ -89,18 +90,20 @@ public class CartController {
 
  // ✅ 장바구니에서 선택한 상품 구매
     @PostMapping("/checkout")
-    public String checkoutCart(@RequestBody List<Integer> prodcodeList, HttpServletRequest request) {
+    public String checkoutCart(@RequestBody List<OrderItem> orderItems, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("member") == null) {
             return "로그인이 필요합니다.";
         }
 
-        // ✅ `Member` 객체를 가져온 후, `email`을 추출해야 함
+        // ✅ `Member` 객체에서 이메일 가져오기
         Member member = (Member) session.getAttribute("member");
-        String email = member.getEmail(); // ✅ 올바른 방식
+        String email = member.getEmail();
 
-        orderService.createOrderFromCart(email, prodcodeList);
+        // ✅ 주문 서비스 호출하여 주문 생성
+        orderService.createOrderFromCart(email, orderItems);
+
         return "선택한 상품이 구매 목록에 추가되었습니다.";
     }
 
