@@ -21,7 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+//@CrossOrigin(origins = "http://ureca-team15-env.eba-4tu3mkrm.ap-northeast-2.elasticbeanstalk.com", allowCredentials = "true")
 @RequestMapping("/order")
 public class OrderController {
 

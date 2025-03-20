@@ -16,11 +16,13 @@ import com.shop.living.dto.Member;
 import com.shop.living.service.LoginAttemptService;
 import com.shop.living.service.MemberService;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+//@CrossOrigin(origins = "http://ureca-team15-env.eba-4tu3mkrm.ap-northeast-2.elasticbeanstalk.com", allowCredentials = "true")
 @RequestMapping("/member")
 public class MemberController {
 
@@ -99,15 +101,21 @@ public class MemberController {
     }
     
 
-    // ✅ 로그아웃 (세션 삭제)
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request) {
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate();
-            return "로그아웃 성공";
+
+            // JSESSIONID 쿠키 삭제
+            Cookie cookie = new Cookie("JSESSIONID", null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+
+            return ResponseEntity.ok("로그아웃 성공");
         }
-        return "로그인 상태가 아닙니다.";
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인 상태가 아닙니다.");
     }
     
 
