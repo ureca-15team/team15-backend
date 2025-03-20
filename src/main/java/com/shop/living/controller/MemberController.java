@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.shop.living.dto.Member;
+import com.shop.living.service.LoginAttemptService;
 import com.shop.living.service.MemberService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,26 +58,43 @@ public class MemberController {
     }
 
 
-    // ✅ 로그인 (세션 방식)
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+ // ✅ 로그인 (세션 방식)
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Member member, HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
+        String email = member.getEmail();
+
+        // 로그인 차단 여부 확인
+        if (loginAttemptService.isBlocked(email)) {
+            response.put("message", "로그인 시도가 너무 많습니다. 1분 후 다시 시도해주세요.");
+           System.out.println("로그인이 막혔습니다");
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response); // 429 Too Many Requests
+        }
+
         try {
             Member loggedInMember = memberService.login(member);
             if (loggedInMember != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("member", loggedInMember);
+                
+                // 로그인 성공 시 실패 횟수 초기화
+                loginAttemptService.resetAttempts(email);
 
                 response.put("nickname", loggedInMember.getNickname());
                 response.put("message", "로그인 성공");
-                return ResponseEntity.ok(response); // 200 OK (로그인 성공)
+                return ResponseEntity.ok(response);
             } else {
+                // 로그인 실패 시 실패 횟수 증가
+                loginAttemptService.increaseFailedAttempts(email);
                 response.put("message", "이메일 또는 비밀번호를 확인해주세요.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response); // 401 Unauthorized (로그인 실패)
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
         } catch (Exception e) {
+            e.printStackTrace();
             response.put("message", "서버 오류 발생");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 500 Internal Server Error
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
     
