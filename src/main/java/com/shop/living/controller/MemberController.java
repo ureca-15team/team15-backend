@@ -29,7 +29,7 @@ public class MemberController {
     @Autowired
     private MemberService memberService;
 
-    // ✅ 회원가입
+    // 회원가입
     @PostMapping("/signup")
     public String signup(@RequestBody Member member) {
         try {
@@ -41,8 +41,8 @@ public class MemberController {
         }
     }
     
-    // ✅ 이메일 중복 확인 API
-    @PostMapping("/check-email") // ✅ GET -> POST로 변경
+    // 이메일 중복 확인 API
+    @PostMapping("/check-email") 
     public Map<String, Object> checkEmail(@RequestBody Map<String, String> request) {
         Map<String, Object> response = new HashMap<>();
         String email = request.get("email");
@@ -62,7 +62,8 @@ public class MemberController {
 
     @Autowired
     private LoginAttemptService loginAttemptService;
- // ✅ 로그인 (세션 방식)
+    
+    // 로그인 (세션 방식)
     @PostMapping("/login")
     public ResponseEntity<Map<String, String>> login(@RequestBody Member member, HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
@@ -71,8 +72,8 @@ public class MemberController {
         // 로그인 차단 여부 확인
         if (loginAttemptService.isBlocked(email)) {
             response.put("message", "로그인 시도가 너무 많습니다. 1분 후 다시 시도해주세요.");
-           System.out.println("로그인이 막혔습니다");
-            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response); // 429 Too Many Requests
+
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS).body(response); 
         }
 
         try {
@@ -101,6 +102,7 @@ public class MemberController {
     }
     
 
+    // 로그아웃 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession(false);
@@ -120,7 +122,7 @@ public class MemberController {
     
 
 
-    // ✅ 로그인 상태 확인
+    // 로그인 상태 확인
     @GetMapping("/status")
     public Map<String, String> checkLoginStatus(HttpServletRequest request) {
         Map<String, String> response = new HashMap<>();
@@ -135,16 +137,16 @@ public class MemberController {
         return response;
     }
     
-    // ✅ 🔥 **세션 유지 시간 확인 기능 추가!**
+    // 세션 유지 시간 확인 기능
     @GetMapping("/session-time")
     public Map<String, String> getSessionTime(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         Map<String, String> response = new HashMap<>();
 
         if (session != null) {
-            int timeout = session.getMaxInactiveInterval(); // 초 단위 유지 시간
+            int timeout = session.getMaxInactiveInterval(); 
             response.put("message", "세션이 유지 중입니다.");
-            response.put("sessionTimeout", timeout + "초"); // 초 단위 출력
+            response.put("sessionTimeout", timeout + "초"); 
         } else {
             response.put("message", "세션이 존재하지 않습니다.");
         }

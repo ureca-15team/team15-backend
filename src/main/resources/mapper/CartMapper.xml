@@ -7,7 +7,7 @@
         ON DUPLICATE KEY UPDATE quantity = quantity + #{quantity};
     </insert>
 
-    <!-- ✅ resultMap을 사용하여 cart_id를 cartId로 매핑 -->
+    <!-- resultMap을 사용하여 cart_id를 cartId로 매핑 -->
     <resultMap id="cartResultMap" type="com.shop.living.dto.Cart">
         <id column="cart_id" property="cartId"/>
         <result column="email" property="email"/>
@@ -15,7 +15,7 @@
         <result column="quantity" property="quantity"/>
     </resultMap>
 
-    <!-- ✅ 장바구니 조회 (cart_id를 cartId로 매핑) -->
+    <!-- 장바구니 조회 (cart_id를 cartId로 매핑) -->
     <select id="getCartItems" resultMap="cartResultMap">
         SELECT cart_id AS cartId, email, prodcode, quantity FROM cart WHERE email = #{email};
     </select>

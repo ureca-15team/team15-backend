@@ -20,13 +20,13 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    // ✅ 모든 상품 조회
+    // 모든 상품 조회
     @GetMapping
     public List<Product> getAllProducts() {
         return productService.getAllProducts();
     }
 
-    // ✅ 특정 상품 상세 조회
+    // 특정 상품 상세 조회
     @GetMapping("/{prodcode}")
     public Product getProductById(@PathVariable int prodcode) {
         return productService.getProductById(prodcode);

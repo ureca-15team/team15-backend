@@ -34,7 +34,7 @@ public interface CartDao {
     @Delete("DELETE FROM cart WHERE cart_id = #{cartId}")
     int removeFromCart(int cartId);
 
-    // ✅ 선택한 상품 삭제 (orderItems 타입 변경)
+    // 선택한 상품 삭제 
     @Delete({
         "<script>",
         "DELETE FROM cart WHERE email = #{email} AND prodcode IN",

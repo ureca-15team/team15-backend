@@ -7,7 +7,7 @@ public class Order {
     private int orderId;
     private String email;
     private Date orderDate;
-    private List<OrderItem> orderItems; // ✅ 주문한 상품 리스트 추가
+    private List<OrderItem> orderItems; // 주문한 상품 리스트 추가
 
     public Order() {}
 

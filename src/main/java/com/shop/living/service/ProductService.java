@@ -14,12 +14,12 @@ public class ProductService {
     @Autowired
     private ProductDao productDao;
 
-    // ✅ 모든 상품 조회
+    // 모든 상품 조회
     public List<Product> getAllProducts() {
         return productDao.getAllProducts();
     }
 
-    // ✅ 특정 상품 상세 조회
+    // 특정 상품 상세 조회
     public Product getProductById(int prodcode) {
         return productDao.getProductById(prodcode);
     }

@@ -15,10 +15,10 @@ public class OrderService {
     @Autowired
     private OrderDao orderDao;
 
-    // ✅ 상세 페이지에서 바로 구매
+    // 상세 페이지에서 바로 구매
     public void createOrder(Order order) {
         orderDao.createOrder(order); // orderId 자동 생성됨
-        System.out.println("생성된 orderId: " + order.getOrderId());
+
 
         // 주문한 상품 정보가 있다면 추가
         if (order.getOrderItems() != null && !order.getOrderItems().isEmpty()) {
@@ -28,31 +28,30 @@ public class OrderService {
         }
     }
 
-    // ✅ 장바구니에서 선택한 상품 구매
+    // 장바구니에서 선택한 상품 구매
     public void createOrderFromCart(String email, List<OrderItem> orderItems) {
         Order order = new Order();
         order.setEmail(email);
         orderDao.createOrder(order);
         int orderId = order.getOrderId();
-        System.out.println("✅ 주문 생성된 orderId: " + orderId);
+ 
 
-        // ✅ 주문 아이템 저장
+        // 주문 아이템 저장
         for (OrderItem item : orderItems) {
             orderDao.addOrderItem(orderId, item.getProdcode(), item.getQuantity());
         }
 
-        // ✅ 장바구니에서 해당 상품 제거
+        // 장바구니에서 해당 상품 제거
         orderDao.removeMultipleItems(email, orderItems);
     }
 
-    // ✅ 구매 목록 조회
+    // 구매 목록 조회
     public List<Order> getOrderHistory(String email) {
         List<Order> orders = orderDao.getOrderHistory(email);
-        System.out.println("조회된 주문 목록: " + orders);
         return orders;
     }
 
-    // ✅ 구매 취소
+    // 구매 취소
     public void cancelOrder(int orderId) {
         orderDao.cancelOrder(orderId);
     }

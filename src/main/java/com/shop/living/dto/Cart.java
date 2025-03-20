@@ -8,7 +8,7 @@ public class Cart {
 
     public Cart() {}
 
-    // ✅ cartId까지 포함하는 생성자 추가
+    // cartId까지 포함하는 생성자 추가
     public Cart(int cartId, String email, int prodcode, int quantity) {
         this.cartId = cartId;
         this.email = email;

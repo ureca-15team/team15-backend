@@ -23,7 +23,6 @@ public class CartService {
     }
 
     public int removeFromCart(int cartId) {
-        System.out.println("✅ 장바구니 삭제 요청 - cartId: " + cartId);
         return cartDao.removeFromCart(cartId);
     }
 

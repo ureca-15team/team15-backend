@@ -18,17 +18,17 @@ import com.shop.living.dto.OrderItem;
 @Mapper
 public interface OrderDao {
 
-    // ✅ 새로운 주문 생성
+    // 새로운 주문 생성
 	@Insert("INSERT INTO orders (email) VALUES (#{email})")
     @Options(useGeneratedKeys = true, keyProperty = "orderId")
     void createOrder(Order order);
 
-    // ✅ 주문 항목 추가 (주문한 상품 추가)
+    // 주문 항목 추가 
 	@Insert("INSERT INTO order_items (order_id, prodcode, quantity) VALUES (#{orderId}, #{prodcode}, #{quantity})")
 	void addOrderItem(@Param("orderId") int orderId, @Param("prodcode") int prodcode, @Param("quantity") int quantity);
 
 
-    // ✅ 주문 목록 조회 (내가 구매한 상품 조회)
+    // 주문 목록 조회 
 	@Select("SELECT * FROM orders WHERE email = #{email}")
     @Results(id = "orderMap", value = {
         @Result(property = "orderId", column = "order_id", id = true),
@@ -39,8 +39,8 @@ public interface OrderDao {
     })
     List<Order> getOrderHistory(String email);
     
-    // ✅ 특정 주문에 대한 주문 상세 항목 조회
-	// ✅ 특정 주문에 대한 주문 상세 항목 조회
+    // 특정 주문에 대한 주문 상세 항목 조회
+	// 특정 주문에 대한 주문 상세 항목 조회
 	@Select("SELECT item_id, order_id, prodcode, quantity FROM order_items WHERE order_id = #{orderId}")
 	@Results({
 	    @Result(property = "itemId", column = "item_id"),
@@ -51,11 +51,11 @@ public interface OrderDao {
 	List<OrderItem> getOrderItemsByOrderId(int orderId);
 
 
-    // ✅ 주문 취소
+    // 주문 취소
     @Delete("DELETE FROM orders WHERE order_id = #{orderId}")
     void cancelOrder(int orderId);
 
-    // ✅ 장바구니에서 선택한 상품 구매 후 장바구니에서 삭제
+    // 장바구니에서 선택한 상품 구매 후 장바구니에서 삭제
     @Delete({
         "<script>",
         "DELETE FROM cart WHERE email = #{email} AND prodcode IN",

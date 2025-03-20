@@ -32,18 +32,17 @@ public class CartController {
     @Autowired
     private OrderService orderService;
 
-    // ✅ 장바구니에 상품 추가
+    // 장바구니 목록 추가 
     @PostMapping("/add")
     public String addToCart(@RequestBody Cart cart, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("member") == null) {
-            System.out.println("❌ 세션이 존재하지 않거나, 로그인 정보가 없음");
+
             return "로그인이 필요합니다.";
         }
 
-        Member member = (Member) session.getAttribute("member"); // ✅ 세션에서 회원 객체 가져오기
-        System.out.println("✅ 세션 ID: " + session.getId() + ", 이메일: " + member.getEmail());
+        Member member = (Member) session.getAttribute("member"); 
 
         cart.setEmail(member.getEmail());
         cartService.addToCart(cart);
@@ -51,33 +50,32 @@ public class CartController {
     }
 
 
-    // ✅ 장바구니 목록 조회
+    // 장바구니 목록 조회
     @GetMapping
     public List<Cart> getCartItems(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("member") == null) {
-            System.out.println("❌ 세션이 존재하지 않음 또는 로그인되지 않음");
+
             return null;
         }
 
         Member member = (Member) session.getAttribute("member");
-        System.out.println("✅ 세션 ID: " + session.getId() + ", 이메일: " + member.getEmail());
+
 
         return cartService.getCartItems(member.getEmail());
     }
 
-    // ✅ 장바구니에서 특정 상품 삭제
+    // 장바구니에서 특정 상품 삭제
     @DeleteMapping("/{cartId}")
     public String removeFromCart(@PathVariable int cartId, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("member") == null) {
-            System.out.println("❌ 세션이 존재하지 않음 또는 로그인되지 않음");
             return "로그인이 필요합니다.";
         }
 
-        System.out.println("✅ 삭제 요청: cartId = " + cartId);
+
 
         int result = cartService.removeFromCart(cartId);
         if (result > 0) {
@@ -88,7 +86,7 @@ public class CartController {
     }
 
 
- // ✅ 장바구니에서 선택한 상품 구매
+ // 장바구니에서 선택한 상품 구매
     @PostMapping("/checkout")
     public String checkoutCart(@RequestBody List<OrderItem> orderItems, HttpServletRequest request) {
         HttpSession session = request.getSession(false);
@@ -97,11 +95,11 @@ public class CartController {
             return "로그인이 필요합니다.";
         }
 
-        // ✅ `Member` 객체에서 이메일 가져오기
+        // Member 객체에서 이메일 가져오기
         Member member = (Member) session.getAttribute("member");
         String email = member.getEmail();
 
-        // ✅ 주문 서비스 호출하여 주문 생성
+        // 주문 서비스 호출하여 주문 생성
         orderService.createOrderFromCart(email, orderItems);
 
         return "선택한 상품이 구매 목록에 추가되었습니다.";
